@@ -1,33 +1,68 @@
-def load_table_data(table):
+current_df = get_cached_dataframe()
+        if current_df is None:
+            return html.Div(
+                [html.H3("Error: Data not loaded"), html.P("Check server logs.")],
+                style={'padding': '20px', 'color': 'red'}
+            )
 
-    if not table:
-        raise dash.exceptions.PreventUpdate
+        current_profiles = load_cached_profiles()
+        if not current_profiles:
+            return html.Div(
+                [html.H3("Error: Profiles not available"), html.P("Check server logs.")],
+                style={'padding': '20px', 'color': 'red'}
+            )
 
-    print(f"[INFO] Selected table = {table}")
+        confirmed_dtypes = session_data.get('confirmed_dtypes', {})
+        if not confirmed_dtypes:
+            confirmed_dtypes = {}
+            for col, profile_data in current_profiles.items():
+                confirmed_dtypes[col] = profile_data.get('dtype', 'categorical')
 
-    engine = _current_db.get('engine')
-    db_type = _current_db.get('db_type', 'postgresql')
+        # Route to pages
+        if pathname == '/upload':
+            return page_upload.generate_upload_page()
 
-    if not engine:
-        print("[ERROR] No engine found in _current_db")
-        raise dash.exceptions.PreventUpdate
+        elif pathname == '/config':
+            return page_config.generate_config_page(current_df, current_profiles, confirmed_dtypes)
 
-    try:
-        print(f"[INFO] Loading table: {table}")
+        elif pathname == '/dashboard':
+            kpi_selections = session_data.get('kpi_selections', store_kpi_data or [])
+            filter_selections = session_data.get('filter_selections', store_filter_data or [])
+            
 
-        df = fetch(
-            engine,
-            table=table,
-            db_type=db_type
-        )
+            llm_analysis = None
+            if config_dict:
+                llm_analysis = AnalysisFormatter.format_analysis(
+                    type('DashboardConfig', (), config_dict)() if isinstance(config_dict, dict) else config_dict
+                )
 
-        print(f"[OK] Loaded {len(df)} rows")
+            result = page_dashboard.generate_dashboard_page(
+                current_df,
+                kpi_selections=kpi_selections,
+                filter_selections=filter_selections,
+                confirmed_dtypes=confirmed_dtypes,
+                llm_analysis=llm_analysis
+            )
+            return result
+        
+        elif pathname == '/data-review':
+            return page_data_review.generate_data_review_page(current_df, current_profiles)
+        
+        elif pathname == '/companies':
+            from pages import page_companies
+            return page_companies.generate_companies_page()
+        
+        elif pathname == '/mapping':
+            from pages import page_user_company
+            return page_user_company.generate_mapping_page()
 
-        return df.to_json(
-            date_format='iso',
-            orient='split'
-        )
+        else:
+            return page_auth.generate_auth_page()
 
     except Exception as e:
-        print(f"[ERROR] {e}")
-        raise dash.exceptions.PreventUpdate
+        import traceback
+        print(f"[ERROR] display_page: {type(e).__name__}: {e}\n{traceback.format_exc()}")
+        return html.Div(
+            [html.H3("Error loading page"), html.P("Check server logs.")],
+            style={'padding': '20px', 'backgroundColor': '#ffeeee', 'color': '#cc0000'}
+        )
