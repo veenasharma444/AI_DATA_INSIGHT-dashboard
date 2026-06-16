@@ -1,68 +1,269 @@
-current_df = get_cached_dataframe()
-        if current_df is None:
-            return html.Div(
-                [html.H3("Error: Data not loaded"), html.P("Check server logs.")],
-                style={'padding': '20px', 'color': 'red'}
-            )
+PHASE 1: DATA LOADING (Only after authentication)
+# ═══════════════════════════════════════════════════════════════
 
-        current_profiles = load_cached_profiles()
-        if not current_profiles:
-            return html.Div(
-                [html.H3("Error: Profiles not available"), html.P("Check server logs.")],
-                style={'padding': '20px', 'color': 'red'}
-            )
+def load_data(path: str) -> pd.DataFrame:
+    """Load data from cache or CSV or generate sample"""
+    from core.cache_manager import CacheManager
 
-        confirmed_dtypes = session_data.get('confirmed_dtypes', {})
-        if not confirmed_dtypes:
-            confirmed_dtypes = {}
-            for col, profile_data in current_profiles.items():
-                confirmed_dtypes[col] = profile_data.get('dtype', 'categorical')
+    active_upload_path = CacheManager.get_active_upload_path()
+    if active_upload_path and os.path.exists(active_upload_path):
+        print(f"[OK] Loading active user upload: {active_upload_path}")
+        try:
+            with open(active_upload_path, 'rb') as f:
+                df = pickle.load(f)
+            print(f"[OK] Loaded {df.shape[0]:,} rows x {df.shape[1]} cols from user upload")
+            return df
+        except Exception as e:
+            print(f"[WARN] Failed to load active upload: {e}, falling back to default")
 
-        # Route to pages
-        if pathname == '/upload':
-            return page_upload.generate_upload_page()
+    if os.path.exists(path):
+        df = pd.read_csv(path, parse_dates=True)
+        print(f"[OK] Loaded real data from {path} -> {df.shape[0]:,} rows x {df.shape[1]} cols")
+        return df
 
-        elif pathname == '/config':
-            return page_config.generate_config_page(current_df, current_profiles, confirmed_dtypes)
+    print("[INFO] CSV not found - using built-in sample data")
+    np.random.seed(42)
+    n = 500
+    categories = ["Electronics", "Clothing", "Food", "Furniture", "Sports"]
+    regions = ["North", "South", "East", "West"]
+    dates = pd.date_range("2023-01-01", periods=n, freq="D")
 
-        elif pathname == '/dashboard':
-            kpi_selections = session_data.get('kpi_selections', store_kpi_data or [])
-            filter_selections = session_data.get('filter_selections', store_filter_data or [])
-            
+    df = pd.DataFrame({
+        "date": np.random.choice(dates, n),
+        "category": np.random.choice(categories, n),
+        "region": np.random.choice(regions, n),
+        "sales": np.random.randint(100, 5000, n),
+        "profit": np.random.randint(10, 1000, n),
+        "units": np.random.randint(1, 50, n),
+        "discount": np.round(np.random.uniform(0, 0.4, n), 2),
+    })
+    df["date"] = pd.to_datetime(df["date"])
+    df.sort_values("date", inplace=True)
+    df.reset_index(drop=True, inplace=True)
+    return df
 
-            llm_analysis = None
-            if config_dict:
-                llm_analysis = AnalysisFormatter.format_analysis(
-                    type('DashboardConfig', (), config_dict)() if isinstance(config_dict, dict) else config_dict
-                )
+# print("\n[INFO] Phase 1: Loading data...")
+df = load_data(None)
 
-            result = page_dashboard.generate_dashboard_page(
-                current_df,
-                kpi_selections=kpi_selections,
-                filter_selections=filter_selections,
-                confirmed_dtypes=confirmed_dtypes,
-                llm_analysis=llm_analysis
-            )
-            return result
-        
-        elif pathname == '/data-review':
-            return page_data_review.generate_data_review_page(current_df, current_profiles)
-        
-        elif pathname == '/companies':
-            from pages import page_companies
-            return page_companies.generate_companies_page()
-        
-        elif pathname == '/mapping':
-            from pages import page_user_company
-            return page_user_company.generate_mapping_page()
+cache_dir = os.path.join(os.path.dirname(__file__), '.cache')
+os.makedirs(cache_dir, exist_ok=True)
+df_pickle_path = os.path.join(cache_dir, 'dataframe.pkl')
+profiles_json_path = os.path.join(cache_dir, 'profiles.json')
 
-        else:
-            return page_auth.generate_auth_page()
+from pandas.api.types import is_numeric_dtype as _is_num_startup
 
+df_processed = df.copy()
+_coerced = 0
+for _col in df_processed.columns:
+    if not _is_num_startup(df_processed[_col]):
+        try:
+            _cleaned = (df_processed[_col].astype(str)
+                        .str.replace(r'[,\u20B9$\u20AC\xa3]', '', regex=True)
+                        .str.strip())
+            _converted = pd.to_numeric(_cleaned, errors='coerce')
+            if _converted.notna().sum() / max(len(df_processed), 1) > 0.5:
+                df_processed[_col] = _converted
+                _coerced += 1
+        except Exception:
+            pass
+# print(f"[OK] Startup coercion: {_coerced} columns converted to numeric")
+
+with open(df_pickle_path, 'wb') as f:
+    pickle.dump(df_processed, f)
+# print(f"[OK] DataFrame cached to {df_pickle_path}")
+
+def get_cached_dataframe():
+    """Load dataframe from cache"""
+    df = None
+    try:
+        from core.cache_manager import CacheManager
+        active_path = CacheManager.get_active_upload_path()
+        if active_path and os.path.exists(active_path):
+            with open(active_path, 'rb') as f:
+                df = pickle.load(f)
     except Exception as e:
-        import traceback
-        print(f"[ERROR] display_page: {type(e).__name__}: {e}\n{traceback.format_exc()}")
-        return html.Div(
-            [html.H3("Error loading page"), html.P("Check server logs.")],
-            style={'padding': '20px', 'backgroundColor': '#ffeeee', 'color': '#cc0000'}
-        )
+        print(f"[WARN] Failed to load active upload: {e}")
+
+    if df is None:
+        try:
+            with open(df_pickle_path, 'rb') as f:
+                df = pickle.load(f)
+        except Exception as e:
+            print(f"[ERROR] Failed to load cached dataframe: {e}")
+            return None
+
+    return df.copy()
+
+def load_cached_profiles():
+    """Load column profiles"""
+    try:
+        from core.cache_manager import CacheManager
+        upload_profiles_path = CacheManager.get_active_upload_profiles_path()
+        if upload_profiles_path and os.path.exists(upload_profiles_path):
+            with open(upload_profiles_path, 'r') as f:
+                return json.load(f)
+    except Exception as e:
+        print(f"[WARN] Failed to load upload profiles: {e}")
+
+    try:
+        with open(profiles_json_path, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"[WARN] Could not load profiles: {e}")
+        return {}
+
+# ═══════════════════════════════════════════════════════════════
+# PHASE 2: AUTO-ANALYSIS (Intelligence Layer)
+# ═══════════════════════════════════════════════════════════════
+
+# print("\n[INFO] Phase 2: Analyzing data structure...")
+profiler = DataProfiler()
+profiles = profiler.profile(df)
+
+# print("[OK] Data Analysis:")
+for name, profile in profiles.items():
+    print(f"  - {name}: {profile.dtype} (cardinality={profile.cardinality}, missing={profile.missing_pct:.1f}%)")
+
+profiles_dict = {
+    name: {
+        'dtype': profile.dtype,
+        'cardinality': profile.cardinality,
+        'missing_pct': profile.missing_pct,
+        'value_range': profile.value_range if hasattr(profile, 'value_range') else None,
+        'top_values': profile.top_values if hasattr(profile, 'top_values') else None,
+        'is_temporal': profile.is_temporal,
+        'has_outliers': profile.has_outliers if hasattr(profile, 'has_outliers') else False,
+    }
+    for name, profile in profiles.items()
+}
+with open(profiles_json_path, 'w') as f:
+    json.dump(profiles_dict, f, indent=2, default=str)
+print(f"[OK] Profiles cached to {profiles_json_path}")
+
+print("\n[INFO] Phase 1-2: Generating auto-layout...")
+builder = LayoutBuilder()
+auto_config = builder.build_config(profiles)
+print(f"[OK] Auto-generated {len(auto_config.charts)} charts, {len(auto_config.filters)} filters, {len(auto_config.kpis)} KPIs")
+
+insight_extractor = InsightExtractor()
+insights = insight_extractor.extract(df, profiles)
+if insights:
+    print("\n[WARN] Data Quality Issues:")
+    for insight in insights:
+        print(f"  - {insight.description}")
+
+# ═══════════════════════════════════════════════════════════════
+# PHASE 3: LLM ANALYSIS
+# ═══════════════════════════════════════════════════════════════
+
+llm_config = None
+llm_config_obj = None
+llm_analyzer = None
+provider = None
+dashboard_config = auto_config
+
+try:
+    config_paths = [
+        "llm_config.json",
+        os.path.join(os.path.dirname(__file__), "llm_config.json"),
+        os.path.join(os.getcwd(), "llm_config.json"),
+    ]
+
+    llm_config_path = None
+    for path in config_paths:
+        if os.path.exists(path):
+            llm_config_path = path
+            break
+
+    if llm_config_path:
+        with open(llm_config_path) as f:
+            llm_config = json.load(f)
+        print(f"\n[OK] Found llm_config.json at: {llm_config_path}")
+        print(f"[OK] Loaded LLM config: provider={llm_config.get('provider')}")
+
+        config_obj = DEFAULT_CONFIG
+        if llm_config.get('provider'):
+            config_obj.provider = llm_config['provider']
+        if llm_config.get('model_name'):
+            config_obj.model_name = llm_config['model_name']
+        if llm_config.get('base_url'):
+            config_obj.base_url = llm_config['base_url']
+        if llm_config.get('api_key'):
+            config_obj.api_key = llm_config['api_key']
+        if llm_config.get('include_sample_data') is not None:
+            config_obj.include_sample_data = llm_config['include_sample_data']
+
+        llm_config_obj = config_obj
+
+        print("\n[INFO] Phase 3: Analyzing with LLM...")
+        print(f"[INFO] Using provider: {config_obj.provider} at {config_obj.base_url}")
+
+        try:
+            print("[INFO] Creating LLM provider and analyzer...")
+            provider = LLMFactory.create(config_obj)
+            llm_analyzer = LLMAnalyzer(provider, config_obj)
+            print("[OK] LLM analyzer created successfully")
+
+            user_context = f"Dataset contains {len(df):,} records with {len(profiles)} columns."
+
+            print(f"[INFO] Running startup LLM analysis...")
+
+            try:
+                llm_config_result = llm_analyzer.analyze(df, profiles, user_context)
+                if llm_config_result:
+                    dashboard_config = llm_config_result
+                    print("[OK] LLM analysis successful")
+                else:
+                    dashboard_config = auto_config
+                    print("[WARN] LLM returned empty result")
+            except (TimeoutError, ConnectionError):
+                print(f"[WARN] LLM analysis timeout")
+                dashboard_config = auto_config
+            except Exception as e:
+                print(f"[WARN] LLM analysis failed: {type(e).__name__}")
+                dashboard_config = auto_config
+
+        except Exception as e:
+            print(f"[WARN] LLM initialization failed: {type(e).__name__}")
+            dashboard_config = auto_config
+            llm_analyzer = None
+
+    else:
+        dashboard_config = auto_config
+        print("\n[INFO] llm_config.json not found - using auto-layout only")
+
+except Exception as e:
+    print(f"[ERROR] LLM initialization error: {e}")
+    dashboard_config = auto_config
+
+chart_analyzer = None
+if llm_analyzer is not None and provider is not None:
+    try:
+        chart_analyzer = ChartAnalyzer(provider, llm_config_obj)
+        print("[OK] Chart analyzer initialized")
+    except Exception as e:
+        print(f"[WARN] Chart analyzer initialization failed: {e}")
+
+# ═══════════════════════════════════════════════════════════════
+# PHASE 4: DASH APP LAYOUT
+# ═══════════════════════════════════════════════════════════════
+
+app = Dash(__name__, suppress_callback_exceptions=True, title="Onex AI Data Insight",
+           external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+print("\n[INFO] Pre-initializing store data...")
+df_json = df.to_json(orient='split')
+
+profiles_dict = {}
+for col_name, profile in profiles.items():
+    profiles_dict[col_name] = {
+        'dtype': profile.dtype,
+        'cardinality': profile.cardinality,
+        'missing_pct': profile.missing_pct,
+        'top_values': profile.top_values,
+        'is_temporal': profile.is_temporal,
+    }
+
+config_dict = dashboard_config.to_dict() if hasattr(dashboard_config, 'to_dict') else {}
+
+print("[OK] Store data pre-initialized")
