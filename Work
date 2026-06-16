@@ -1,0 +1,33 @@
+def load_table_data(table):
+
+    if not table:
+        raise dash.exceptions.PreventUpdate
+
+    print(f"[INFO] Selected table = {table}")
+
+    engine = _current_db.get('engine')
+    db_type = _current_db.get('db_type', 'postgresql')
+
+    if not engine:
+        print("[ERROR] No engine found in _current_db")
+        raise dash.exceptions.PreventUpdate
+
+    try:
+        print(f"[INFO] Loading table: {table}")
+
+        df = fetch(
+            engine,
+            table=table,
+            db_type=db_type
+        )
+
+        print(f"[OK] Loaded {len(df)} rows")
+
+        return df.to_json(
+            date_format='iso',
+            orient='split'
+        )
+
+    except Exception as e:
+        print(f"[ERROR] {e}")
+        raise dash.exceptions.PreventUpdate
