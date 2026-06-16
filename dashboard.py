@@ -463,8 +463,6 @@ from core import query_builder
 #     print("[CRITICAL ERROR] Dashboard cannot start without database connection")
 #     raise
 
-# Server-side holder for the active DB engine
-_current_db = {'engine': None, 'db_type': None}
 
 # ═══════════════════════════════════════════════════════════════
 # PHASE 1: DATA LOADING (Only after authentication)
@@ -1284,11 +1282,10 @@ from core.db_connector import fetch
 
 @app.callback(
     Output('store-global-dataframe', 'data'),
-    Input('table-dropdown', 'value'),   # 🔥 when table is selected
-    State('schema-dropdown', 'value'),
+    Input('db-table-dropdown', 'value'),   # 🔥 when table is selected
     prevent_initial_call=True
 )
-def load_table_data(table, schema):
+def load_table_data(table):
 
     if not table:
         raise dash.exceptions.PreventUpdate
@@ -1297,26 +1294,16 @@ def load_table_data(table, schema):
     db_type = _current_db.get('db_type', 'postgresql')
 
     if not engine:
-        print("[ERROR] No DB engine found")
         raise dash.exceptions.PreventUpdate
 
-    try:
-        print(f"[INFO] Loading table: {schema}.{table}")
-
-        df = fetch(
-            engine,
-            table=table,
-            params={"schema": schema},  # ✅ THIS IS KEY
-            db_type=db_type
+    df = fetch(
+        engine,
+        table=table,
+        db_type=db_type
         )
 
-        print(f"[OK] Loaded {df.shape[0]} rows")
 
-        return df.to_json(date_format='iso', orient='split')
-
-    except Exception as e:
-        print(f"[ERROR] load_table_data: {e}")
-        raise dash.exceptions.PreventUpdate
+    return df.to_json(date_format='iso', orient='split')
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -1335,7 +1322,7 @@ if __name__ == "__main__":
     # print("[READY] AI-INSIGHT Dashboard ready!")
     # print("="*70)
     # print("\n📍 Database: PostgreSQL")
-    # print("   Host: 192.168.202.135:5432")
+    # print("   Host: 192.168.202.114:5432")
     # print("   Database: ai_insight")
     # print("\n🔐 Authentication: PostgreSQL-backed")
     # print("   New users register → saved to database")
