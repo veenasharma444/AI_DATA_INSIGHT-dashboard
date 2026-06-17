@@ -1,269 +1,375 @@
-PHASE 1: DATA LOADING (Only after authentication)
-# ═══════════════════════════════════════════════════════════════
+(venv) D:\veena.sharma\My Documents\GIT REPOSITORY\AI-Dashboard>python dashboard.py
+[OK] Loading active user upload: .cache/user_uploads\20260617-112438-86830dfb.pkl
+[OK] Loaded 4,205 rows x 31 cols from user upload
+  - Client Name: categorical (cardinality=1202, missing=0.2%)
+  - Marsha: categorical (cardinality=555, missing=57.6%)
+  - Property Name: categorical (cardinality=451, missing=77.3%)
+  - Invoice No: categorical (cardinality=4198, missing=0.2%)
+  - Invoice Date: temporal (cardinality=528, missing=0.2%)
+  - Due Days: numeric (cardinality=528, missing=0.2%)
+  - Revenue Head: categorical (cardinality=26, missing=8.3%)
+  - Nature of Services: categorical (cardinality=6, missing=8.3%)
+  - Service: categorical (cardinality=48, missing=0.2%)
+  - Invoice Amount: numeric (cardinality=2017, missing=0.1%)
+  - Below 30 Days: numeric (cardinality=843, missing=0.1%)
+  - Overdue 30 - 60 Days: numeric (cardinality=440, missing=0.2%)
+  - Overdue 60 - 180 Days: numeric (cardinality=502, missing=0.2%)
+  - Overdue Above 180 Days: numeric (cardinality=249, missing=0.2%)
+  - Above 1 year: numeric (cardinality=292, missing=0.2%)
+  - Balance Collection Amount: numeric (cardinality=401, missing=0.2%)
+  - Credit Note Issued: numeric (cardinality=4, missing=0.2%)
+  - Balance Amount: numeric (cardinality=2376, missing=0.2%)
+  - Unnamed: 18: numeric (cardinality=173, missing=79.5%)
+  - Forex Balance Amount: numeric (cardinality=209, missing=0.2%)
+  - Particulars: categorical (cardinality=3881, missing=0.2%)
+  - Manager: categorical (cardinality=79, missing=0.2%)
+  - Partner: categorical (cardinality=10, missing=0.2%)
+  - Department: categorical (cardinality=8, missing=0.2%)
+  - Company Group: categorical (cardinality=5, missing=0.2%)
+  - Group: categorical (cardinality=275, missing=0.2%)
+  - Contact Person Name: categorical (cardinality=1194, missing=8.7%)
+  - Brand Name: categorical (cardinality=19, missing=98.1%)
+  - Project MID: categorical (cardinality=1881, missing=10.2%)
+  - Country: categorical (cardinality=43, missing=0.2%)
+  - GST NO: numeric (cardinality=569, missing=0.2%)
+[OK] Profiles cached to D:\veena.sharma\My Documents\GIT REPOSITORY\AI-Dashboard\.cache\profiles.json
 
-def load_data(path: str) -> pd.DataFrame:
-    """Load data from cache or CSV or generate sample"""
-    from core.cache_manager import CacheManager
+[INFO] Phase 1-2: Generating auto-layout...
+[OK] Generated comprehensive dashboard:
+  - Filters: 5
+  - KPIs: 4
+  - Charts: 12 (analyzing all column types)
+  - Layout: 3-col
+[OK] Auto-generated 12 charts, 5 filters, 4 KPIs
 
-    active_upload_path = CacheManager.get_active_upload_path()
-    if active_upload_path and os.path.exists(active_upload_path):
-        print(f"[OK] Loading active user upload: {active_upload_path}")
-        try:
-            with open(active_upload_path, 'rb') as f:
-                df = pickle.load(f)
-            print(f"[OK] Loaded {df.shape[0]:,} rows x {df.shape[1]} cols from user upload")
-            return df
-        except Exception as e:
-            print(f"[WARN] Failed to load active upload: {e}, falling back to default")
+[WARN] Data Quality Issues:
+  - Marsha has 57.6% missing values
+  - Property Name has 77.3% missing values
+  - Unnamed: 18 has 79.5% missing values
+  - Brand Name has 98.1% missing values
+  - Due Days contains outliers (range: (3.0, 2180.0))
+  - Invoice Amount contains outliers (range: (0.0, 4588996.0))
+  - Below 30 Days contains outliers (range: (0.0, 4588996.0))
+  - Overdue 30 - 60 Days contains outliers (range: (0.0, 3466202.0))
+  - Overdue 60 - 180 Days contains outliers (range: (0.0, 1588918.98))
+  - Overdue Above 180 Days contains outliers (range: (0.0, 955800.0))
+  - Above 1 year contains outliers (range: (0.0, 575250.0))
+  - Balance Collection Amount contains outliers (range: (-3460974.0, 0.0))
+  - Credit Note Issued contains outliers (range: (-59590.0, 0.0))
+  - Balance Amount contains outliers (range: (-325914.44, 4568009.0))
+  - Unnamed: 18 contains outliers (range: (-91.7922933333333, 122.54))
+  - Forex Balance Amount contains outliers (range: (-3690.0, 17809.0))
 
-    if os.path.exists(path):
-        df = pd.read_csv(path, parse_dates=True)
-        print(f"[OK] Loaded real data from {path} -> {df.shape[0]:,} rows x {df.shape[1]} cols")
-        return df
+[OK] Found llm_config.json at: llm_config.json
+[OK] Loaded LLM config: provider=ollama
 
-    print("[INFO] CSV not found - using built-in sample data")
-    np.random.seed(42)
-    n = 500
-    categories = ["Electronics", "Clothing", "Food", "Furniture", "Sports"]
-    regions = ["North", "South", "East", "West"]
-    dates = pd.date_range("2023-01-01", periods=n, freq="D")
+[INFO] Phase 3: Analyzing with LLM...
+[INFO] Using provider: ollama at https://ollama.osourceglobal.com:11434
+[INFO] Creating LLM provider and analyzer...
+[OK] LLM analyzer created successfully
+[INFO] Running startup LLM analysis...
+[INFO] Sending data to LLM for analysis...
+[INFO] Calling Ollama at https://ollama.osourceglobal.com:11434...
+[INFO] Using model: qwen2.5:14b
+[INFO] Testing connectivity (10s timeout)...
+[OK] Ollama server is responding
+[INFO] Sending analysis request (timeout: 300s)...
+[DEBUG] Response status: 200
+[OK] Ollama response received
+[OK] LLM analysis successful
+[INFO] LLM suggested: 2 filters, 3 KPIs, 4 charts
+[WARN] Filter column 'Product Line' not found in dataset, skipping
+[WARN] Filter column 'Region' not found in dataset, skipping
+[WARN] KPI metric 'Revenue' not found in dataset, skipping
+[WARN] KPI metric 'Customer Segment' not found in dataset, skipping
+[WARN] KPI metric 'Costs' not found in dataset, skipping
+[WARN] Chart x_column 'Year' not found, skipping chart 0
+[WARN] Chart y_column 'Revenue' not found, skipping chart 0
+[WARN] Chart x_column 'Product Line' not found, skipping chart 1
+[WARN] Chart y_column 'Total Revenue' not found, skipping chart 1
+[WARN] Chart x_column 'Region' not found, skipping chart 2
+[WARN] Chart y_column 'Revenue' not found, skipping chart 2
+[WARN] Chart x_column 'Customer Segment' not found, skipping chart 3
+[WARN] Chart y_column 'Total Revenue' not found, skipping chart 3
+[WARN] No valid charts generated after validation
+[WARN] No valid KPIs generated after validation
+[WARN] No valid filters generated after validation
+[OK] LLM analysis successful
+[OK] Chart analyzer initialized
 
-    df = pd.DataFrame({
-        "date": np.random.choice(dates, n),
-        "category": np.random.choice(categories, n),
-        "region": np.random.choice(regions, n),
-        "sales": np.random.randint(100, 5000, n),
-        "profit": np.random.randint(10, 1000, n),
-        "units": np.random.randint(1, 50, n),
-        "discount": np.round(np.random.uniform(0, 0.4, n), 2),
-    })
-    df["date"] = pd.to_datetime(df["date"])
-    df.sort_values("date", inplace=True)
-    df.reset_index(drop=True, inplace=True)
-    return df
+[INFO] Pre-initializing store data...
+[OK] Store data pre-initialized
+PAGE_CONFIG LOADED
+[OK] Loading active user upload: .cache/user_uploads\20260617-112438-86830dfb.pkl
+[OK] Loaded 4,205 rows x 31 cols from user upload
+  - Client Name: categorical (cardinality=1202, missing=0.2%)
+  - Marsha: categorical (cardinality=555, missing=57.6%)
+  - Property Name: categorical (cardinality=451, missing=77.3%)
+  - Invoice No: categorical (cardinality=4198, missing=0.2%)
+  - Invoice Date: temporal (cardinality=528, missing=0.2%)
+  - Due Days: numeric (cardinality=528, missing=0.2%)
+  - Revenue Head: categorical (cardinality=26, missing=8.3%)
+  - Nature of Services: categorical (cardinality=6, missing=8.3%)
+  - Service: categorical (cardinality=48, missing=0.2%)
+  - Invoice Amount: numeric (cardinality=2017, missing=0.1%)
+  - Below 30 Days: numeric (cardinality=843, missing=0.1%)
+  - Overdue 30 - 60 Days: numeric (cardinality=440, missing=0.2%)
+  - Overdue 60 - 180 Days: numeric (cardinality=502, missing=0.2%)
+  - Overdue Above 180 Days: numeric (cardinality=249, missing=0.2%)
+  - Above 1 year: numeric (cardinality=292, missing=0.2%)
+  - Balance Collection Amount: numeric (cardinality=401, missing=0.2%)
+  - Credit Note Issued: numeric (cardinality=4, missing=0.2%)
+  - Balance Amount: numeric (cardinality=2376, missing=0.2%)
+  - Unnamed: 18: numeric (cardinality=173, missing=79.5%)
+  - Forex Balance Amount: numeric (cardinality=209, missing=0.2%)
+  - Particulars: categorical (cardinality=3881, missing=0.2%)
+  - Manager: categorical (cardinality=79, missing=0.2%)
+  - Partner: categorical (cardinality=10, missing=0.2%)
+  - Department: categorical (cardinality=8, missing=0.2%)
+  - Company Group: categorical (cardinality=5, missing=0.2%)
+  - Group: categorical (cardinality=275, missing=0.2%)
+  - Contact Person Name: categorical (cardinality=1194, missing=8.7%)
+  - Brand Name: categorical (cardinality=19, missing=98.1%)
+  - Project MID: categorical (cardinality=1881, missing=10.2%)
+  - Country: categorical (cardinality=43, missing=0.2%)
+  - GST NO: numeric (cardinality=569, missing=0.2%)
+[OK] Profiles cached to D:\veena.sharma\My Documents\GIT REPOSITORY\AI-Dashboard\.cache\profiles.json
 
-# print("\n[INFO] Phase 1: Loading data...")
-df = load_data(None)
+[INFO] Phase 1-2: Generating auto-layout...
+[OK] Generated comprehensive dashboard:
+  - Filters: 5
+  - KPIs: 4
+  - Charts: 12 (analyzing all column types)
+  - Layout: 3-col
+[OK] Auto-generated 12 charts, 5 filters, 4 KPIs
 
-cache_dir = os.path.join(os.path.dirname(__file__), '.cache')
-os.makedirs(cache_dir, exist_ok=True)
-df_pickle_path = os.path.join(cache_dir, 'dataframe.pkl')
-profiles_json_path = os.path.join(cache_dir, 'profiles.json')
+[WARN] Data Quality Issues:
+  - Marsha has 57.6% missing values
+  - Property Name has 77.3% missing values
+  - Unnamed: 18 has 79.5% missing values
+  - Brand Name has 98.1% missing values
+  - Due Days contains outliers (range: (3.0, 2180.0))
+  - Invoice Amount contains outliers (range: (0.0, 4588996.0))
+  - Below 30 Days contains outliers (range: (0.0, 4588996.0))
+  - Overdue 30 - 60 Days contains outliers (range: (0.0, 3466202.0))
+  - Overdue 60 - 180 Days contains outliers (range: (0.0, 1588918.98))
+  - Overdue Above 180 Days contains outliers (range: (0.0, 955800.0))
+  - Above 1 year contains outliers (range: (0.0, 575250.0))
+  - Balance Collection Amount contains outliers (range: (-3460974.0, 0.0))
+  - Credit Note Issued contains outliers (range: (-59590.0, 0.0))
+  - Balance Amount contains outliers (range: (-325914.44, 4568009.0))
+  - Unnamed: 18 contains outliers (range: (-91.7922933333333, 122.54))
+  - Forex Balance Amount contains outliers (range: (-3690.0, 17809.0))
 
-from pandas.api.types import is_numeric_dtype as _is_num_startup
+[OK] Found llm_config.json at: llm_config.json
+[OK] Loaded LLM config: provider=ollama
 
-df_processed = df.copy()
-_coerced = 0
-for _col in df_processed.columns:
-    if not _is_num_startup(df_processed[_col]):
-        try:
-            _cleaned = (df_processed[_col].astype(str)
-                        .str.replace(r'[,\u20B9$\u20AC\xa3]', '', regex=True)
-                        .str.strip())
-            _converted = pd.to_numeric(_cleaned, errors='coerce')
-            if _converted.notna().sum() / max(len(df_processed), 1) > 0.5:
-                df_processed[_col] = _converted
-                _coerced += 1
-        except Exception:
-            pass
-# print(f"[OK] Startup coercion: {_coerced} columns converted to numeric")
+[INFO] Phase 3: Analyzing with LLM...
+[INFO] Using provider: ollama at https://ollama.osourceglobal.com:11434
+[INFO] Creating LLM provider and analyzer...
+[OK] LLM analyzer created successfully
+[INFO] Running startup LLM analysis...
+[INFO] Sending data to LLM for analysis...
+[INFO] Calling Ollama at https://ollama.osourceglobal.com:11434...
+[INFO] Using model: qwen2.5:14b
+[INFO] Testing connectivity (10s timeout)...
+[OK] Ollama server is responding
+[INFO] Sending analysis request (timeout: 300s)...
+[DEBUG] Response status: 200
+[OK] Ollama response received
+[OK] LLM analysis successful
+[INFO] LLM suggested: 2 filters, 3 KPIs, 4 charts
+[WARN] Filter column 'Region' not found in dataset, skipping
+[WARN] Filter column 'Customer_Segment' not found in dataset, skipping
+[WARN] KPI metric 'Revenue' not found in dataset, skipping
+[WARN] KPI metric 'Number_of_Customers' not found in dataset, skipping
+[WARN] KPI metric 'Average_Order_Value' not found in dataset, skipping
+[WARN] Chart x_column 'Date' not found, skipping chart 0
+[WARN] Chart y_column 'Revenue' not found, skipping chart 0
+[WARN] Chart x_column 'Customer_Segment' not found, skipping chart 1
+[WARN] Chart y_column 'Total_Revenue' not found, skipping chart 1
+[ERROR] Failed to convert LLM response to config: unhashable type: 'list'
+[WARN] LLM returned empty result
+[OK] Chart analyzer initialized
 
-with open(df_pickle_path, 'wb') as f:
-    pickle.dump(df_processed, f)
-# print(f"[OK] DataFrame cached to {df_pickle_path}")
+[INFO] Pre-initializing store data...
+[OK] Store data pre-initialized
+Dash is running on http://0.0.0.0:8050/
 
-def get_cached_dataframe():
-    """Load dataframe from cache"""
-    df = None
-    try:
-        from core.cache_manager import CacheManager
-        active_path = CacheManager.get_active_upload_path()
-        if active_path and os.path.exists(active_path):
-            with open(active_path, 'rb') as f:
-                df = pickle.load(f)
-    except Exception as e:
-        print(f"[WARN] Failed to load active upload: {e}")
+ * Serving Flask app 'dashboard'
+ * Debug mode: on
+[OK] Loading active user upload: .cache/user_uploads\20260617-112438-86830dfb.pkl
+[OK] Loaded 4,205 rows x 31 cols from user upload
+  - Client Name: categorical (cardinality=1202, missing=0.2%)
+  - Marsha: categorical (cardinality=555, missing=57.6%)
+  - Property Name: categorical (cardinality=451, missing=77.3%)
+  - Invoice No: categorical (cardinality=4198, missing=0.2%)
+  - Invoice Date: temporal (cardinality=528, missing=0.2%)
+  - Due Days: numeric (cardinality=528, missing=0.2%)
+  - Revenue Head: categorical (cardinality=26, missing=8.3%)
+  - Nature of Services: categorical (cardinality=6, missing=8.3%)
+  - Service: categorical (cardinality=48, missing=0.2%)
+  - Invoice Amount: numeric (cardinality=2017, missing=0.1%)
+  - Below 30 Days: numeric (cardinality=843, missing=0.1%)
+  - Overdue 30 - 60 Days: numeric (cardinality=440, missing=0.2%)
+  - Overdue 60 - 180 Days: numeric (cardinality=502, missing=0.2%)
+  - Overdue Above 180 Days: numeric (cardinality=249, missing=0.2%)
+  - Above 1 year: numeric (cardinality=292, missing=0.2%)
+  - Balance Collection Amount: numeric (cardinality=401, missing=0.2%)
+  - Credit Note Issued: numeric (cardinality=4, missing=0.2%)
+  - Balance Amount: numeric (cardinality=2376, missing=0.2%)
+  - Unnamed: 18: numeric (cardinality=173, missing=79.5%)
+  - Forex Balance Amount: numeric (cardinality=209, missing=0.2%)
+  - Particulars: categorical (cardinality=3881, missing=0.2%)
+  - Manager: categorical (cardinality=79, missing=0.2%)
+  - Partner: categorical (cardinality=10, missing=0.2%)
+  - Department: categorical (cardinality=8, missing=0.2%)
+  - Company Group: categorical (cardinality=5, missing=0.2%)
+  - Group: categorical (cardinality=275, missing=0.2%)
+  - Contact Person Name: categorical (cardinality=1194, missing=8.7%)
+  - Brand Name: categorical (cardinality=19, missing=98.1%)
+  - Project MID: categorical (cardinality=1881, missing=10.2%)
+  - Country: categorical (cardinality=43, missing=0.2%)
+  - GST NO: numeric (cardinality=569, missing=0.2%)
+[OK] Profiles cached to D:\veena.sharma\My Documents\GIT REPOSITORY\AI-Dashboard\.cache\profiles.json
 
-    if df is None:
-        try:
-            with open(df_pickle_path, 'rb') as f:
-                df = pickle.load(f)
-        except Exception as e:
-            print(f"[ERROR] Failed to load cached dataframe: {e}")
-            return None
+[INFO] Phase 1-2: Generating auto-layout...
+[OK] Generated comprehensive dashboard:
+  - Filters: 5
+  - KPIs: 4
+  - Charts: 12 (analyzing all column types)
+  - Layout: 3-col
+[OK] Auto-generated 12 charts, 5 filters, 4 KPIs
 
-    return df.copy()
+[WARN] Data Quality Issues:
+  - Marsha has 57.6% missing values
+  - Property Name has 77.3% missing values
+  - Unnamed: 18 has 79.5% missing values
+  - Brand Name has 98.1% missing values
+  - Due Days contains outliers (range: (3.0, 2180.0))
+  - Invoice Amount contains outliers (range: (0.0, 4588996.0))
+  - Below 30 Days contains outliers (range: (0.0, 4588996.0))
+  - Overdue 30 - 60 Days contains outliers (range: (0.0, 3466202.0))
+  - Overdue 60 - 180 Days contains outliers (range: (0.0, 1588918.98))
+  - Overdue Above 180 Days contains outliers (range: (0.0, 955800.0))
+  - Above 1 year contains outliers (range: (0.0, 575250.0))
+  - Balance Collection Amount contains outliers (range: (-3460974.0, 0.0))
+  - Credit Note Issued contains outliers (range: (-59590.0, 0.0))
+  - Balance Amount contains outliers (range: (-325914.44, 4568009.0))
+  - Unnamed: 18 contains outliers (range: (-91.7922933333333, 122.54))
+  - Forex Balance Amount contains outliers (range: (-3690.0, 17809.0))
 
-def load_cached_profiles():
-    """Load column profiles"""
-    try:
-        from core.cache_manager import CacheManager
-        upload_profiles_path = CacheManager.get_active_upload_profiles_path()
-        if upload_profiles_path and os.path.exists(upload_profiles_path):
-            with open(upload_profiles_path, 'r') as f:
-                return json.load(f)
-    except Exception as e:
-        print(f"[WARN] Failed to load upload profiles: {e}")
+[OK] Found llm_config.json at: llm_config.json
+[OK] Loaded LLM config: provider=ollama
 
-    try:
-        with open(profiles_json_path, 'r') as f:
-            return json.load(f)
-    except Exception as e:
-        print(f"[WARN] Could not load profiles: {e}")
-        return {}
+[INFO] Phase 3: Analyzing with LLM...
+[INFO] Using provider: ollama at https://ollama.osourceglobal.com:11434
+[INFO] Creating LLM provider and analyzer...
+[OK] LLM analyzer created successfully
+[INFO] Running startup LLM analysis...
+[INFO] Sending data to LLM for analysis...
+[INFO] Calling Ollama at https://ollama.osourceglobal.com:11434...
+[INFO] Using model: qwen2.5:14b
+[INFO] Testing connectivity (10s timeout)...
+[OK] Ollama server is responding
+[INFO] Sending analysis request (timeout: 300s)...
+[DEBUG] Response status: 200
+[OK] Ollama response received
+[OK] LLM analysis successful
+[INFO] LLM suggested: 3 filters, 3 KPIs, 3 charts
+[WARN] Filter column 'Customer_Segment' not found in dataset, skipping
+[WARN] Filter column 'Region' not found in dataset, skipping
+[WARN] Filter column 'Subscription_Type' not found in dataset, skipping
+[WARN] KPI metric 'Total_Revenue' not found in dataset, skipping
+[WARN] KPI metric 'Customer_Count' not found in dataset, skipping
+[WARN] KPI metric 'Average_Sale_Value' not found in dataset, skipping
+[WARN] Chart x_column 'Customer_Segment' not found, skipping chart 0
+[WARN] Chart y_column 'Total_Revenue' not found, skipping chart 0
+[WARN] Chart x_column 'Payment_Date' not found, skipping chart 1
+[WARN] Chart y_column 'Total_Revenue' not found, skipping chart 1
+[WARN] Chart x_column 'Region' not found, skipping chart 2
+[WARN] Chart y_column 'Total_Revenue' not found, skipping chart 2
+[WARN] No valid charts generated after validation
+[WARN] No valid KPIs generated after validation
+[WARN] No valid filters generated after validation
+[OK] LLM analysis successful
+[OK] Chart analyzer initialized
 
-# ═══════════════════════════════════════════════════════════════
-# PHASE 2: AUTO-ANALYSIS (Intelligence Layer)
-# ═══════════════════════════════════════════════════════════════
+[INFO] Pre-initializing store data...
+[OK] Store data pre-initialized
+PAGE_CONFIG LOADED
+[OK] Loading active user upload: .cache/user_uploads\20260617-112438-86830dfb.pkl
+[OK] Loaded 4,205 rows x 31 cols from user upload
+  - Client Name: categorical (cardinality=1202, missing=0.2%)
+  - Marsha: categorical (cardinality=555, missing=57.6%)
+  - Property Name: categorical (cardinality=451, missing=77.3%)
+  - Invoice No: categorical (cardinality=4198, missing=0.2%)
+  - Invoice Date: temporal (cardinality=528, missing=0.2%)
+  - Due Days: numeric (cardinality=528, missing=0.2%)
+  - Revenue Head: categorical (cardinality=26, missing=8.3%)
+  - Nature of Services: categorical (cardinality=6, missing=8.3%)
+  - Service: categorical (cardinality=48, missing=0.2%)
+  - Invoice Amount: numeric (cardinality=2017, missing=0.1%)
+  - Below 30 Days: numeric (cardinality=843, missing=0.1%)
+  - Overdue 30 - 60 Days: numeric (cardinality=440, missing=0.2%)
+  - Overdue 60 - 180 Days: numeric (cardinality=502, missing=0.2%)
+  - Overdue Above 180 Days: numeric (cardinality=249, missing=0.2%)
+  - Above 1 year: numeric (cardinality=292, missing=0.2%)
+  - Balance Collection Amount: numeric (cardinality=401, missing=0.2%)
+  - Credit Note Issued: numeric (cardinality=4, missing=0.2%)
+  - Balance Amount: numeric (cardinality=2376, missing=0.2%)
+  - Unnamed: 18: numeric (cardinality=173, missing=79.5%)
+  - Forex Balance Amount: numeric (cardinality=209, missing=0.2%)
+  - Particulars: categorical (cardinality=3881, missing=0.2%)
+  - Manager: categorical (cardinality=79, missing=0.2%)
+  - Partner: categorical (cardinality=10, missing=0.2%)
+  - Department: categorical (cardinality=8, missing=0.2%)
+  - Company Group: categorical (cardinality=5, missing=0.2%)
+  - Group: categorical (cardinality=275, missing=0.2%)
+  - Contact Person Name: categorical (cardinality=1194, missing=8.7%)
+  - Brand Name: categorical (cardinality=19, missing=98.1%)
+  - Project MID: categorical (cardinality=1881, missing=10.2%)
+  - Country: categorical (cardinality=43, missing=0.2%)
+  - GST NO: numeric (cardinality=569, missing=0.2%)
+[OK] Profiles cached to D:\veena.sharma\My Documents\GIT REPOSITORY\AI-Dashboard\.cache\profiles.json
 
-# print("\n[INFO] Phase 2: Analyzing data structure...")
-profiler = DataProfiler()
-profiles = profiler.profile(df)
+[INFO] Phase 1-2: Generating auto-layout...
+[OK] Generated comprehensive dashboard:
+  - Filters: 5
+  - KPIs: 4
+  - Charts: 12 (analyzing all column types)
+  - Layout: 3-col
+[OK] Auto-generated 12 charts, 5 filters, 4 KPIs
 
-# print("[OK] Data Analysis:")
-for name, profile in profiles.items():
-    print(f"  - {name}: {profile.dtype} (cardinality={profile.cardinality}, missing={profile.missing_pct:.1f}%)")
+[WARN] Data Quality Issues:
+  - Marsha has 57.6% missing values
+  - Property Name has 77.3% missing values
+  - Unnamed: 18 has 79.5% missing values
+  - Brand Name has 98.1% missing values
+  - Due Days contains outliers (range: (3.0, 2180.0))
+  - Invoice Amount contains outliers (range: (0.0, 4588996.0))
+  - Below 30 Days contains outliers (range: (0.0, 4588996.0))
+  - Overdue 30 - 60 Days contains outliers (range: (0.0, 3466202.0))
+  - Overdue 60 - 180 Days contains outliers (range: (0.0, 1588918.98))
+  - Overdue Above 180 Days contains outliers (range: (0.0, 955800.0))
+  - Above 1 year contains outliers (range: (0.0, 575250.0))
+  - Balance Collection Amount contains outliers (range: (-3460974.0, 0.0))
+  - Credit Note Issued contains outliers (range: (-59590.0, 0.0))
+  - Balance Amount contains outliers (range: (-325914.44, 4568009.0))
+  - Unnamed: 18 contains outliers (range: (-91.7922933333333, 122.54))
+  - Forex Balance Amount contains outliers (range: (-3690.0, 17809.0))
 
-profiles_dict = {
-    name: {
-        'dtype': profile.dtype,
-        'cardinality': profile.cardinality,
-        'missing_pct': profile.missing_pct,
-        'value_range': profile.value_range if hasattr(profile, 'value_range') else None,
-        'top_values': profile.top_values if hasattr(profile, 'top_values') else None,
-        'is_temporal': profile.is_temporal,
-        'has_outliers': profile.has_outliers if hasattr(profile, 'has_outliers') else False,
-    }
-    for name, profile in profiles.items()
-}
-with open(profiles_json_path, 'w') as f:
-    json.dump(profiles_dict, f, indent=2, default=str)
-print(f"[OK] Profiles cached to {profiles_json_path}")
+[OK] Found llm_config.json at: llm_config.json
+[OK] Loaded LLM config: provider=ollama
 
-print("\n[INFO] Phase 1-2: Generating auto-layout...")
-builder = LayoutBuilder()
-auto_config = builder.build_config(profiles)
-print(f"[OK] Auto-generated {len(auto_config.charts)} charts, {len(auto_config.filters)} filters, {len(auto_config.kpis)} KPIs")
-
-insight_extractor = InsightExtractor()
-insights = insight_extractor.extract(df, profiles)
-if insights:
-    print("\n[WARN] Data Quality Issues:")
-    for insight in insights:
-        print(f"  - {insight.description}")
-
-# ═══════════════════════════════════════════════════════════════
-# PHASE 3: LLM ANALYSIS
-# ═══════════════════════════════════════════════════════════════
-
-llm_config = None
-llm_config_obj = None
-llm_analyzer = None
-provider = None
-dashboard_config = auto_config
-
-try:
-    config_paths = [
-        "llm_config.json",
-        os.path.join(os.path.dirname(__file__), "llm_config.json"),
-        os.path.join(os.getcwd(), "llm_config.json"),
-    ]
-
-    llm_config_path = None
-    for path in config_paths:
-        if os.path.exists(path):
-            llm_config_path = path
-            break
-
-    if llm_config_path:
-        with open(llm_config_path) as f:
-            llm_config = json.load(f)
-        print(f"\n[OK] Found llm_config.json at: {llm_config_path}")
-        print(f"[OK] Loaded LLM config: provider={llm_config.get('provider')}")
-
-        config_obj = DEFAULT_CONFIG
-        if llm_config.get('provider'):
-            config_obj.provider = llm_config['provider']
-        if llm_config.get('model_name'):
-            config_obj.model_name = llm_config['model_name']
-        if llm_config.get('base_url'):
-            config_obj.base_url = llm_config['base_url']
-        if llm_config.get('api_key'):
-            config_obj.api_key = llm_config['api_key']
-        if llm_config.get('include_sample_data') is not None:
-            config_obj.include_sample_data = llm_config['include_sample_data']
-
-        llm_config_obj = config_obj
-
-        print("\n[INFO] Phase 3: Analyzing with LLM...")
-        print(f"[INFO] Using provider: {config_obj.provider} at {config_obj.base_url}")
-
-        try:
-            print("[INFO] Creating LLM provider and analyzer...")
-            provider = LLMFactory.create(config_obj)
-            llm_analyzer = LLMAnalyzer(provider, config_obj)
-            print("[OK] LLM analyzer created successfully")
-
-            user_context = f"Dataset contains {len(df):,} records with {len(profiles)} columns."
-
-            print(f"[INFO] Running startup LLM analysis...")
-
-            try:
-                llm_config_result = llm_analyzer.analyze(df, profiles, user_context)
-                if llm_config_result:
-                    dashboard_config = llm_config_result
-                    print("[OK] LLM analysis successful")
-                else:
-                    dashboard_config = auto_config
-                    print("[WARN] LLM returned empty result")
-            except (TimeoutError, ConnectionError):
-                print(f"[WARN] LLM analysis timeout")
-                dashboard_config = auto_config
-            except Exception as e:
-                print(f"[WARN] LLM analysis failed: {type(e).__name__}")
-                dashboard_config = auto_config
-
-        except Exception as e:
-            print(f"[WARN] LLM initialization failed: {type(e).__name__}")
-            dashboard_config = auto_config
-            llm_analyzer = None
-
-    else:
-        dashboard_config = auto_config
-        print("\n[INFO] llm_config.json not found - using auto-layout only")
-
-except Exception as e:
-    print(f"[ERROR] LLM initialization error: {e}")
-    dashboard_config = auto_config
-
-chart_analyzer = None
-if llm_analyzer is not None and provider is not None:
-    try:
-        chart_analyzer = ChartAnalyzer(provider, llm_config_obj)
-        print("[OK] Chart analyzer initialized")
-    except Exception as e:
-        print(f"[WARN] Chart analyzer initialization failed: {e}")
-
-# ═══════════════════════════════════════════════════════════════
-# PHASE 4: DASH APP LAYOUT
-# ═══════════════════════════════════════════════════════════════
-
-app = Dash(__name__, suppress_callback_exceptions=True, title="Onex AI Data Insight",
-           external_stylesheets=[dbc.themes.BOOTSTRAP])
-
-print("\n[INFO] Pre-initializing store data...")
-df_json = df.to_json(orient='split')
-
-profiles_dict = {}
-for col_name, profile in profiles.items():
-    profiles_dict[col_name] = {
-        'dtype': profile.dtype,
-        'cardinality': profile.cardinality,
-        'missing_pct': profile.missing_pct,
-        'top_values': profile.top_values,
-        'is_temporal': profile.is_temporal,
-    }
-
-config_dict = dashboard_config.to_dict() if hasattr(dashboard_config, 'to_dict') else {}
-
-print("[OK] Store data pre-initialized")
+[INFO] Phase 3: Analyzing with LLM...
+[INFO] Using provider: ollama at https://ollama.osourceglobal.com:11434
+[INFO] Creating LLM provider and analyzer...
+[OK] LLM analyzer created successfully
+[INFO] Running startup LLM analysis...
+[INFO] Sending data to LLM for analysis...
+[INFO] Calling Ollama at https://ollama.osourceglobal.com:11434...
+[INFO] Using model: qwen2.5:14b
+[INFO] Testing connectivity (10s timeout)...
+[OK] Ollama server is responding
+[INFO] Sending analysis request (timeout: 300s)...
