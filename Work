@@ -1,21 +1,41 @@
-[OK] App DB connected: 192.168.202.114:5432
- Signin clicked 1 veenash
-[AUTH] Login attempt: veenash
 [OK] Login success: veenash
-[AUTH] Login attempt: veenash
-[OK] Login success: veenash
-[OK] Upload saved: 20260617-122956-c6962510 (4,205 rows)
+[OK] Upload saved: 20260617-124122-6b97432e (4,205 rows)
 STEP 1- CALLBACK STARTED
 STEP 3- BEFORE READ_JSON
 DF_JSON TYPE: <class 'str'>
-DF_JSON PREVIEW: {"columns":["Sr No.","Development Unit","Activities","Status"],"index":[0,1,2,3,4],"data":[[1,"POC HTML pages integration : Sign-Up & Sign-In page,All dashboard and UI pages "," Sign-Up & Sign-In page
-READ_JSON ERROR
-FileNotFoundError
-File {"columns":["Sr No.","Development Unit","Activities","Status"],"index":[0,1,2,3,4],"data":[[1,"POC HTML pages integration : Sign-Up & Sign-In page,All dashboard and UI pages "," Sign-Up & Sign-In page,All dashboard and UI pages ","Completed"],[2,"Pending HTML Pages "," Admin Page, Per Service Pages GST, FASSAI and so on","Pending"],[3,"Subscription model ","Tokens per subscription plan gets updated","Completed"],[4,"User onboarding",null,"Completed"],[5,"Model and UI changes"," PDF viewer, Extracted document details, Pagination and added Scrollable UI","Completed"]]} does not exist
+DF_JSON PREVIEW: {"columns":["Client Name","Marsha","Property Name","Invoice No","Invoice Date","Due Days","Revenue Head","Nature of Services","Service","Invoice Amount","Below 30 Days","Overdue 30 - 60 Days","Overdue
+STEP 4- AFTER READ_JSON
+(4205, 31)
+STEP 5 - SUMMARY CREATED
+{'columns': ['Client Name', 'Marsha', 'Property Name', 'Invoice No', 'Invoice Date', 'Due Days', 'Revenue Head', 'Nature of Services', 'Service', 'Invoice Amount', 'Below 30 Days', 'Overdue 30 - 60 Days', 'Overdue 60 - 180 Days', 'Overdue Above 180 Days', 'Above 1 year', 'Balance Collection Amount', 'Credit Note Issued', 'Balance Amount', 'Unnamed: 18', 'Forex Balance Amount', 'Particulars', 'Manager', 'Partner', 'Department', 'Company Group', 'Group', 'Contact Person Name', 'Brand Name', 'Project MID', 'Country', 'GST NO'], 'row_count': 4205, 'numeric_columns': ['Invoice Date', 'Due Days', 'Invoice Amount', 'Below 30 Days', 'Overdue 30 - 60 Days', 'Overdue 60 - 180 Days', 'Overdue Above 180 Days', 'Above 1 year', 'Balance Collection Amount', 'Credit Note Issued', 'Balance Amount', 'Unnamed: 18', 'Forex Balance Amount'], 'categorical_columns': ['Client Name', 'Marsha', 'Property Name', 'Invoice No', 'Revenue Head', 'Nature of Services', 'Service', 'Particulars', 'Manager', 'Partner', 'Department', 'Company Group', 'Group', 'Contact Person Name', 'Brand Name', 'Project MID', 'Country', 'GST NO']}
+STEP 6 - BEFORE ANALYZE
+[ERROR] LLM analysis failed: 'list' object has no attribute 'dtype'
+STEP 7 - AFTER ANALYZE
+<class 'NoneType'>
+None
 STEP 1- CALLBACK STARTED
 STEP 3- BEFORE READ_JSON
 DF_JSON TYPE: <class 'str'>
-DF_JSON PREVIEW: {"columns":["Sr No.","Development Unit","Activities","Status"],"index":[0,1,2,3,4],"data":[[1,"POC HTML pages integration : Sign-Up & Sign-In page,All dashboard and UI pages "," Sign-Up & Sign-In page
-READ_JSON ERROR
-FileNotFoundError
-File {"columns":["Sr No.","Development Unit","Activities","Status"],"index":[0,1,2,3,4],"data":[[1,"POC HTML pages integration : Sign-Up & Sign-In page,All dashboard and UI pages "," Sign-Up & Sign-In page,All dashboard and UI pages ","Completed"],[2,"Pending HTML Pages "," Admin Page, Per Service Pages GST, FASSAI and so on","Pending"],[3,"Subscription model ","Tokens per subscription plan gets updated","Completed"],[4,"User onboarding",null,"Completed"],[5,"Model and UI changes"," PDF viewer, Extracted document details, Pagination and added Scrollable UI","Completed"]]} does not exist
+DF_JSON PREVIEW: {"columns":["Client Name","Marsha","Property Name","Invoice No","Invoice Date","Due Days","Revenue Head","Nature of Services","Service","Invoice Amount","Below 30 Days","Overdue 30 - 60 Days","Overdue
+STEP 4- AFTER READ_JSON
+(4205, 31)
+STEP 5 - SUMMARY CREATED
+{'columns': ['Client Name', 'Marsha', 'Property Name', 'Invoice No', 'Invoice Date', 'Due Days', 'Revenue Head', 'Nature of Services', 'Service', 'Invoice Amount', 'Below 30 Days', 'Overdue 30 - 60 Days', 'Overdue 60 - 180 Days', 'Overdue Above 180 Days', 'Above 1 year', 'Balance Collection Amount', 'Credit Note Issued', 'Balance Amount', 'Unnamed: 18', 'Forex Balance Amount', 'Particulars', 'Manager', 'Partner', 'Department', 'Company Group', 'Group', 'Contact Person Name', 'Brand Name', 'Project MID', 'Country', 'GST NO'], 'row_count': 4205, 'numeric_columns': ['Invoice Date', 'Due Days', 'Invoice Amount', 'Below 30 Days', 'Overdue 30 - 60 Days', 'Overdue 60 - 180 Days', 'Overdue Above 180 Days', 'Above 1 year', 'Balance Collection Amount', 'Credit Note Issued', 'Balance Amount', 'Unnamed: 18', 'Forex Balance Amount'], 'categorical_columns': ['Client Name', 'Marsha', 'Property Name', 'Invoice No', 'Revenue Head', 'Nature of Services', 'Service', 'Particulars', 'Manager', 'Partner', 'Department', 'Company Group', 'Group', 'Contact Person Name', 'Brand Name', 'Project MID', 'Country', 'GST NO']}
+STEP 6 - BEFORE ANALYZE
+[ERROR] LLM analysis failed: 'list' object has no attribute 'dtype'
+STEP 7 - AFTER ANALYZE
+<class 'NoneType'>
+None
+STEP 1- CALLBACK STARTED
+STEP 3- BEFORE READ_JSON
+DF_JSON TYPE: <class 'str'>
+DF_JSON PREVIEW: {"columns":["Client Name","Marsha","Property Name","Invoice No","Invoice Date","Due Days","Revenue Head","Nature of Services","Service","Invoice Amount","Below 30 Days","Overdue 30 - 60 Days","Overdue
+STEP 4- AFTER READ_JSON
+(4205, 31)
+STEP 5 - SUMMARY CREATED
+{'columns': ['Client Name', 'Marsha', 'Property Name', 'Invoice No', 'Invoice Date', 'Due Days', 'Revenue Head', 'Nature of Services', 'Service', 'Invoice Amount', 'Below 30 Days', 'Overdue 30 - 60 Days', 'Overdue 60 - 180 Days', 'Overdue Above 180 Days', 'Above 1 year', 'Balance Collection Amount', 'Credit Note Issued', 'Balance Amount', 'Unnamed: 18', 'Forex Balance Amount', 'Particulars', 'Manager', 'Partner', 'Department', 'Company Group', 'Group', 'Contact Person Name', 'Brand Name', 'Project MID', 'Country', 'GST NO'], 'row_count': 4205, 'numeric_columns': ['Invoice Date', 'Due Days', 'Invoice Amount', 'Below 30 Days', 'Overdue 30 - 60 Days', 'Overdue 60 - 180 Days', 'Overdue Above 180 Days', 'Above 1 year', 'Balance Collection Amount', 'Credit Note Issued', 'Balance Amount', 'Unnamed: 18', 'Forex Balance Amount'], 'categorical_columns': ['Client Name', 'Marsha', 'Property Name', 'Invoice No', 'Revenue Head', 'Nature of Services', 'Service', 'Particulars', 'Manager', 'Partner', 'Department', 'Company Group', 'Group', 'Contact Person Name', 'Brand Name', 'Project MID', 'Country', 'GST NO']}
+STEP 6 - BEFORE ANALYZE
+[ERROR] LLM analysis failed: 'list' object has no attribute 'dtype'
+STEP 7 - AFTER ANALYZE
+<class 'NoneType'>
+None
